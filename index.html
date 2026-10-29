@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6c4d4">
+<meta name="description" content="A letter for you — Samantha's 15th Birthday">
+<title>A letter for you · Samantha's 15th Birthday</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #f6c4d4;
+    --pink-deep: #f0b4c8;
+    --ink: #5c433c;
+    --script: #9a3f56;
+    --script-soft: #b46880;
+    --cream: #fbf6f1;
+    --burgundy: #6b1b30;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100dvh;
+    color: var(--ink);
+    font-family: "Cormorant Garamond", Palatino, Georgia, serif;
+    background:
+      radial-gradient(ellipse 90% 70% at 50% 42%, #ffe8ef 0%, #f7c6d6 46%, #f0b3c8 100%);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    animation: pageIn 0.9s ease both;
+  }
+
+  button { font: inherit; }
+
+  ::selection { background: #f3c1d0; color: #5c2030; }
+
+  .sky, .grain, .glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .glow {
+    background:
+      radial-gradient(ellipse 46% 32% at 50% 46%, rgba(255,255,255,.62), transparent 70%),
+      radial-gradient(circle at 18% 80%, rgba(255,255,255,.28), transparent 26%),
+      radial-gradient(circle at 86% 18%, rgba(255,255,255,.33), transparent 24%);
+  }
+
+  .sky i {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(255,255,255,.95);
+    opacity: .75;
+    animation: twinkle 3.6s ease-in-out infinite;
+  }
+  .sky i:nth-child(1) { top: 16%; left: 10%; animation-delay: .2s; }
+  .sky i:nth-child(2) { top: 22%; left: 78%; width: 4px; height: 4px; animation-delay: 1.1s; }
+  .sky i:nth-child(3) { top: 70%; left: 8%; animation-delay: .6s; }
+  .sky i:nth-child(4) { top: 78%; left: 88%; width: 5px; height: 5px; animation-delay: 1.8s; }
+  .sky i:nth-child(5) { top: 12%; left: 48%; animation-delay: 2.2s; }
+  .sky i:nth-child(6) { top: 62%; left: 72%; animation-delay: .4s; }
+  .sky i:nth-child(7) { top: 38%; left: 92%; animation-delay: 1.4s; }
+  .sky i:nth-child(8) { top: 84%; left: 28%; width: 4px; height: 4px; animation-delay: 2.6s; }
+  .sky i:nth-child(9) { top: 30%; left: 18%; animation-delay: 3s; }
+  .sky i:nth-child(10) { top: 48%; left: 6%; width: 2px; height: 2px; animation-delay: .9s; }
+
+  .grain {
+    width: 100%;
+    height: 100%;
+    opacity: .055;
+    mix-blend-mode: multiply;
+    z-index: 6;
+  }
+
+  .stage {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 108px 28px 88px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sealed-group {
+    position: relative;
+    width: min(100%, 400px);
+    z-index: 1;
+    transition: opacity .8s ease, transform 1s cubic-bezier(.22, 1, .36, 1);
+  }
+
+  .stage[data-state="reading"] .sealed-group {
+    opacity: 0;
+    transform: translateY(10px) scale(.97);
+    pointer-events: none;
+  }
+
+  .headline, .hint {
+    position: absolute;
+    left: 50%;
+    margin: 0;
+    width: max-content;
+    max-width: 92vw;
+    text-align: center;
+    color: var(--script);
+    font-family: "Great Vibes", "Segoe Script", cursive;
+    font-weight: 400;
+    z-index: 2;
+  }
+
+  .headline {
+    top: -6px;
+    transform: translate(-50%, -100%);
+    font-size: clamp(40px, 8vw, 56px);
+    line-height: .9;
+    letter-spacing: .01em;
+    transition: opacity .45s ease, transform .5s ease;
+  }
+
+  .headline .swash {
+    display: block;
+    width: 148px;
+    height: 14px;
+    margin: 2px auto 0;
+  }
+
+  .stage[data-state="open"] .headline,
+  .stage[data-state="reading"] .headline {
+    opacity: 0;
+    transform: translate(-50%, -130%);
+  }
+
+  .hint {
+    bottom: -8px;
+    transform: translate(-50%, 100%);
+    font-size: clamp(22px, 4.6vw, 28px);
+    color: #a3536a;
+    transition: opacity .35s ease, transform .4s ease;
+  }
+
+  .floater {
+    position: relative;
+    animation: floaty 6.4s ease-in-out infinite;
+  }
+
+  .sound {
+    position: fixed;
+    top: max(14px, env(safe-area-inset-top));
+    right: 14px;
+    z-index: 8;
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgba(154, 63, 86, .28);
+    border-radius: 50%;
+    background: rgba(255, 248, 250, .72);
+    color: var(--script);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 18px rgba(120, 40, 60, .12);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .sound svg { width: 22px; height: 22px; display: block; margin: 0 auto; }
+  .sound .slash { opacity: 0; transition: opacity .25s ease; }
+  .sound.is-paused .slash { opacity: 1; }
+  .sound:focus-visible { outline: 2px solid var(--script); outline-offset: 3px; }
+
+  .stage[data-state="reading"] .floater { animation-play-state: paused; }
+
+  .ground {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: -16px;
+    height: 28px;
+    background: radial-gradient(ellipse at center, rgba(130, 36, 60, .28), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .cluster {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 400 / 256;
+    perspective: 1400px;
+    z-index: 1;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .cluster:focus-visible {
+    outline: 2px solid var(--script);
+    outline-offset: 8px;
+    border-radius: 4px;
+  }
+
+  .back, .pocket, .flap, .seal, .peek {
+    position: absolute;
+  }
+
+  .back, .pocket {
+    inset: 0;
+  }
+
+  .back { z-index: 1; }
+  .peek { z-index: 2; }
+  .pocket { z-index: 3; pointer-events: none; }
+  .flap { z-index: 4; }
+  .seal { z-index: 5; }
+
+  .back svg, .pocket svg, .flap-front svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .pocket {
+    opacity: 0;
+    transition: opacity .45s ease .25s;
+  }
+
+  .stage[data-state="open"] .pocket,
+  .stage[data-state="reading"] .pocket {
+    opacity: 1;
+  }
+
+  .flap {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 53.125%;
+    transform-origin: top center;
+    transform-style: preserve-3d;
+    transition: transform 1.15s cubic-bezier(.45, .02, .2, 1);
+  }
+
+  .stage[data-state="open"] .flap,
+  .stage[data-state="reading"] .flap {
+    transform: rotateX(-180deg);
+    opacity: 0;
+    transition: transform 1.45s cubic-bezier(.55, .02, .12, 1) .04s, opacity .6s ease .9s;
+  }
+
+  .flap-front, .flap-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .flap-front { transform: translateZ(1px); }
+
+  .flap-back {
+    transform: rotateX(180deg) translateZ(1px);
+    background:
+      radial-gradient(circle at 50% 78%, #f0c2d0 0%, #c97d94 26%, #8a3852 72%);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+  }
+
+  .stage[data-state="open"] .flap-front,
+  .stage[data-state="reading"] .flap-front {
+    animation: hideFace .2s ease .62s forwards;
+  }
+
+  .seal {
+    left: 50%;
+    top: 49%;
+    width: 23%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -42%);
+    pointer-events: none;
+  }
+
+  .seal::before {
+    content: "";
+    position: absolute;
+    inset: -18%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 214, 226, .95), transparent 68%);
+    z-index: -1;
+    animation: pulse 2.8s ease-in-out infinite;
+  }
+
+  .stage:not([data-state="sealed"]) .seal::before {
+    animation: none;
+    opacity: 0;
+  }
+
+  .rose {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: drop-shadow(0 7px 5px rgba(70, 8, 24, .32));
+    transition: transform .7s cubic-bezier(.22, 1, .36, 1), opacity .55s ease;
+    transform-origin: 50% 60%;
+  }
+
+  .stage[data-state="open"] .rose,
+  .stage[data-state="reading"] .rose {
+    opacity: 0;
+    transform: translateY(-16px) rotate(-16deg) scale(1.18);
+  }
+
+  .stage[data-state="sealed"] .cluster:hover .rose {
+    transform: scale(1.06) rotate(-6deg);
+  }
+
+  .petal {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: 12px;
+    height: 17px;
+    margin: -8px 0 0 -6px;
+    border-radius: 80% 80% 70% 70%;
+    background: linear-gradient(#fff6f9, #f4a8c0);
+    opacity: 0;
+  }
+
+  .stage[data-state="open"] .petal,
+  .stage[data-state="reading"] .petal {
+    animation: fly .85s ease-out var(--delay, 0s) forwards;
+  }
+
+  .peek {
+    width: 62%;
+    height: 86%;
+    left: 50%;
+    bottom: 4%;
+    border: 0;
+    padding: 0;
+    overflow: visible;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 2px;
+    color: var(--script);
+    cursor: pointer;
+    opacity: 0;
+    transform: translate(-50%, 42%) rotate(2.5deg);
+    transition: transform 1.05s cubic-bezier(.22, 1, .36, 1), opacity .5s ease;
+  }
+
+  .stage[data-state="open"] .peek,
+  .stage[data-state="reading"] .peek {
+    opacity: 1;
+    transform: translate(-50%, -24%) rotate(0deg);
+    transition: transform 1.45s cubic-bezier(.16, 1, .28, 1) .18s, opacity .7s ease .12s;
+  }
+
+  .liner {
+    position: absolute;
+    z-index: 0;
+    left: 50%;
+    bottom: calc(100% - 9px);
+    width: 96%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .liner svg { display: block; width: 100%; height: auto; }
+
+  .peek-clip {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 2px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,0) 32%),
+      var(--cream);
+    box-shadow:
+      0 12px 22px rgba(80, 16, 36, .13),
+      inset 0 0 0 1px rgba(255,255,255,.7);
+  }
+
+  .peek:focus-visible {
+    outline: 2px solid var(--script);
+    outline-offset: 3px;
+  }
+
+  .peek-name {
+    margin: 0;
+    padding: 18px 10px 0;
+    font-family: "Great Vibes", cursive;
+    font-weight: 400;
+    line-height: .78;
+    font-size: clamp(28px, 6.4vw, 38px);
+  }
+
+  .peek-name .nth,
+  .name .l2 {
+    display: block;
+    font-size: .5em;
+    line-height: 1.35;
+    color: var(--script-soft);
+  }
+
+  .peek-name span { display: block; }
+
+  .peek-art {
+    display: block;
+    width: 118%;
+    margin: 6px 0 0 -9%;
+    height: auto;
+  }
+
+  .stage[data-state="open"] .peek:hover {
+    transform: translate(-50%, -28%) rotate(0deg);
+  }
+
+  /* Full invitation */
+  .card-wrap {
+    position: fixed;
+    inset: 0;
+    z-index: 4;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 12px 22px 18px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .3s ease, visibility 0s linear .3s;
+  }
+
+  .stage[data-state="reading"] .card-wrap {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity .25s ease .04s, visibility 0s;
+  }
+
+  .frame {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    margin: auto;
+    padding: 10px 6px 4px;
+  }
+
+  .sheet {
+    position: relative;
+    z-index: 1;
+    margin: 10px 22px 8px;
+    border-radius: 3px;
+    box-shadow:
+      0 24px 50px rgba(120, 36, 60, .16),
+      0 2px 8px rgba(120, 36, 60, .08);
+  }
+
+  .paper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 3px;
+    padding: 34px 26px 26px;
+    background-color: var(--cream);
+    background-image:
+      linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,0) 26%),
+      radial-gradient(rgba(130, 80, 70, .045) .6px, transparent .7px);
+    background-size: auto, 3px 3px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(18px) scale(.92);
+  }
+
+  .paper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(112deg, transparent 32%, rgba(255,255,255,.72) 48%, transparent 62%);
+    transform: translateX(-130%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .stage[data-state="reading"] .paper {
+    animation: cardIn 1.2s cubic-bezier(.16, 1, .3, 1) .08s forwards;
+  }
+
+  .stage[data-state="reading"] .paper::before {
+    animation: sheen 1.15s ease .45s forwards;
+  }
+
+  .name {
+    position: relative;
+    margin: 0 0 4px;
+    font-family: "Great Vibes", cursive;
+    font-weight: 400;
+    color: var(--script);
+    font-size: clamp(48px, 12vw, 64px);
+    line-height: .78;
+  }
+
+  .name-star {
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    color: #e7b4c4;
+  }
+
+  .name-star.s1 { left: 6%; top: 6px; }
+  .name-star.s2 { right: 8%; top: 34px; width: 9px; height: 9px; }
+
+  .stage[data-state="reading"] .name-star {
+    animation: twinkle 2.8s ease-in-out infinite;
+  }
+
+  .art {
+    display: block;
+    width: min(100%, 320px);
+    height: auto;
+    margin: 2px auto 0;
+  }
+
+  .rule {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 0 8px;
+    color: #e4b7c6;
+  }
+
+  .rule span {
+    width: 46px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e3b4c4, transparent);
+  }
+
+  .rule svg { width: 9px; height: 9px; }
+
+  .info {
+    margin: 0;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 1.35;
+    letter-spacing: .015em;
+    color: #6a514b;
+  }
+
+  .info .where {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  .info .where:hover { border-bottom-color: rgba(154, 63, 86, .45); }
+
+  .dress {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .dress p {
+    margin: 0;
+    font-family: "Great Vibes", cursive;
+    font-size: 30px;
+    line-height: 1;
+    color: var(--script);
+  }
+
+  .dots {
+    display: inline-flex;
+    gap: 7px;
+    align-items: center;
+  }
+
+  .dots i {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow:
+      inset 0 1px 1px rgba(255,255,255,.45),
+      inset 0 0 0 1px rgba(80, 30, 40, .12);
+  }
+
+  .deco {
+    position: absolute;
+    z-index: 2;
+    opacity: 0;
+    transform: scale(.45) rotate(var(--r, 0deg));
+    filter: drop-shadow(0 6px 6px rgba(120, 40, 60, .12));
+  }
+
+  .stage[data-state="reading"] .deco {
+    animation: pop .9s cubic-bezier(.22, 1.12, .36, 1) var(--d, .2s) forwards;
+  }
+
+  .d-bow-tl { top: 4px; left: 8px; width: 52px; color: #d4849e; --r: -14deg; --d: .12s; }
+  .d-spool-tr { top: 0; right: 18px; width: 62px; color: #e39aaf; --r: 6deg; --d: .24s; }
+  .d-bow-ml { top: 46%; left: 2px; width: 46px; color: #e09aaf; --r: 10deg; --d: .36s; }
+  .d-bow-mr { top: 40%; right: 4px; width: 46px; color: #d989a4; --r: -8deg; --d: .44s; }
+  .d-spool-bl { bottom: 54px; left: 0; width: 64px; color: #d07f9a; --r: -8deg; --d: .52s; }
+  .d-bow-br { bottom: 8px; right: 6px; width: 54px; color: #9d3d58; --r: 12deg; --d: .6s; }
+  .d-star { top: 46px; right: 78px; width: 14px; color: #e7b4c4; --d: .3s; filter: none; }
+
+  .replay {
+    display: block;
+    margin: 16px auto 6px;
+    padding: 6px 12px;
+    border: 0;
+    background: transparent;
+    color: var(--script);
+    font-family: "Great Vibes", cursive;
+    font-size: 28px;
+    cursor: pointer;
+    opacity: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .replay:hover { color: #7c2e44; }
+  .replay:focus-visible { outline: 2px solid var(--script); outline-offset: 3px; border-radius: 8px; }
+
+  .stage[data-state="reading"] .replay {
+    animation: fadeUp .6s ease .75s forwards;
+  }
+
+  @keyframes pageIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(.92); opacity: .45; }
+    50% { transform: scale(1.08); opacity: 1; }
+  }
+
+  @keyframes fly {
+    0% { opacity: 1; transform: rotate(var(--a)) translateY(0) scale(1); }
+    100% { opacity: 0; transform: rotate(var(--a)) translateY(calc(var(--d) * -1)) scale(.4); }
+  }
+
+  @keyframes hideFace {
+    to { opacity: 0; }
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: .35; transform: scale(.8); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(26px) scale(.96); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes sheen {
+    to { transform: translateX(130%); }
+  }
+
+  @keyframes pop {
+    0% { opacity: 0; transform: scale(.4) rotate(calc(var(--r, 0deg) - 10deg)); }
+    100% { opacity: 1; transform: scale(1) rotate(var(--r, 0deg)); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @media (max-width: 380px) {
+    .paper { padding: 28px 16px 22px; margin: 8px 16px; }
+    .name { font-size: 46px; }
+    .info { font-size: 16px; }
+    .d-star { right: 58px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-delay: 0ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+      transition-delay: 0ms !important;
+    }
+  }
+
+  @media print {
+    .sky, .glow, .grain, .sealed-group, .replay { display: none !important; }
+    .card-wrap {
+      position: static !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    .paper, .deco { opacity: 1 !important; transform: none !important; animation: none !important; }
+    body { background: #f6c4d4; }
+  }
+</style>
+</head>
+<body>
+<svg class="defs" aria-hidden="true" width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="star" viewBox="0 0 20 20">
+      <path fill="currentColor" d="M10 0 L11.7 7.1 L19.2 10 L11.7 12.9 L10 20 L8.3 12.9 L.8 10 L8.3 7.1 Z"/>
+    </symbol>
+
+    <symbol id="bow" viewBox="0 0 96 78">
+      <g fill="none" stroke="currentColor" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M46 36 C 34 16, 8 18, 14 36 C 20 52, 36 48, 46 38"/>
+        <path d="M50 36 C 62 16, 88 18, 82 36 C 76 52, 60 48, 50 38"/>
+        <path d="M46 40 C 36 54, 20 70, 14 64"/>
+        <path d="M50 40 C 60 54, 78 72, 84 64"/>
+      </g>
+      <circle cx="48" cy="38" r="4.2" fill="currentColor"/>
+      <circle cx="46.6" cy="36.6" r="1.5" fill="#fff" opacity=".45"/>
+    </symbol>
+
+    <symbol id="spool" viewBox="0 0 86 108">
+      <path d="M62 24 C 82 6, 90 30, 70 36" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M24 96 C 6 108, -2 88, 14 82" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+      <ellipse cx="42" cy="86" rx="20" ry="7.2" fill="#f6d7e2" stroke="#b76d84" stroke-width="1.4"/>
+      <path d="M22 30 V82 C22 90 62 90 62 82 V30" fill="#fff8f5" stroke="#b76d84" stroke-width="1.35"/>
+      <path d="M24 42 H60 M24 52 H60 M24 62 H60 M24 72 H60" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" opacity=".8"/>
+      <ellipse cx="42" cy="30" rx="20" ry="7.2" fill="#f8d0de" stroke="#b76d84" stroke-width="1.4"/>
+      <ellipse cx="42" cy="30" rx="6.5" ry="2.5" fill="#f6e6ec" stroke="#b76d84" stroke-width=".9"/>
+    </symbol>
+
+    <symbol id="party" viewBox="0 0 340 152">
+      <g fill="none" stroke="#5c433c" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M26 126 C 86 136, 250 136, 314 122" stroke-width="1.25"/>
+        <path d="M52 48 V116"/>
+        <path d="M46 116 h12"/>
+        <path d="M49 58 c2 2.6 5 2.4 6.4-.2" fill="#f8e4ea" stroke="none"/>
+        <path d="M294 54 V116"/>
+        <path d="M288 116 h12"/>
+
+        <path d="M90 72 h18 c-.3 15-4.2 25-9 28 c-4.8-3-8.7-13-9-28z" fill="#fffaf7"/>
+        <path d="M99 100 v15"/>
+        <path d="M92 115 h14"/>
+        <path d="M112 66 h18 c-.3 15-4.2 25-9 28 c-4.8-3-8.7-13-9-28z" fill="#fffaf7"/>
+        <path d="M121 94 v16"/>
+        <path d="M114 110 h14"/>
+        <path d="M108 64 l5-7 M114 60 l7-3" stroke="#e4b3c3" stroke-width="1.1"/>
+
+        <ellipse cx="190" cy="124" rx="52" ry="7.5" fill="#fffaf7"/>
+        <path d="M144 98 h92 v14 c0 8-20 13-46 13 s-46-5-46-13z" fill="#fffaf7"/>
+        <path d="M146 104 c8 4 12-3 20 1 s12-3 20 1 12-3 20 1 12-3 20 1 8-.4 10 .6"/>
+        <path d="M160 74 h60 v24 h-60z" fill="#fffaf7"/>
+        <path d="M162 80 c7 3.4 11-2.4 18 1 s11-2.2 17 1 10-2 16 .8 7 .2 8 1"/>
+        <path d="M176 74 V57"/>
+        <path d="M190 74 V52"/>
+        <path d="M204 74 V57"/>
+
+        <rect x="238" y="96" width="34" height="24" rx="1.5" fill="#fffaf7"/>
+        <path d="M255 96 v24 M238 108 h34"/>
+
+        <path d="M136 116 v-18"/>
+        <path d="M132 98 v-8 M136 98 v-10 M140 98 v-8"/>
+      </g>
+
+      <path d="M52 48 c-2.6-8.2 .8-13.2 0-18.4 c1.7 6.2 3.6 7.2 2.5 13.4 c1.9-5.2 4.2-5 1.6 5z" fill="#f7c9d2" stroke="#e3a8b6" stroke-width=".8"/>
+      <path d="M294 54 c-2.4-7.4 .7-12 0-16.6 c1.5 5.2 3.1 6.2 2.1 11.4 c1.7-4.4 3.8-4.2 1.4 5.2z" fill="#f7c9d2" stroke="#e3a8b6" stroke-width=".8"/>
+      <path d="M176 57 c-1.7-6.2 .5-9.4 0-13.2 c1.1 4.2 2.3 5.1 1.6 9.2 c1.3-3.6 2.9-3.4 1 4z" fill="#f8cddd" stroke="#e3a8b6" stroke-width=".7"/>
+      <path d="M190 52 c-1.9-7 .6-11.2 0-15.4 c1.3 5.2 2.6 6.2 1.7 10.6 c1.5-4.2 3.2-4 1.2 4.8z" fill="#f8cddd" stroke="#e3a8b6" stroke-width=".7"/>
+      <path d="M204 57 c-1.7-6.2 .5-9.4 0-13.2 c1.1 4.2 2.3 5.1 1.6 9.2 c1.3-3.6 2.9-3.4 1 4z" fill="#f8cddd" stroke="#e3a8b6" stroke-width=".7"/>
+
+      <g stroke="#c9899c" stroke-width="1">
+        <ellipse cx="270" cy="90" rx="9" ry="4.2" fill="#f6c6d4"/>
+        <path d="M261 88 h18 v5 h-18z" fill="#f6e3df" stroke="none"/>
+        <ellipse cx="270" cy="84" rx="9" ry="4.2" fill="#f3d4c6"/>
+      </g>
+      <path d="M255 96 c-7-8-1-13 0-8 c1-5 7 0 0 8z" fill="#f3b7c8" stroke="#c9899c" stroke-width=".8"/>
+      <path d="M255 96 c7-8 1-13 0-8 c-1-5-7 0 0 8z" fill="#f3b7c8" stroke="#c9899c" stroke-width=".8"/>
+
+      <path d="M126 44 c0-3.2 4.4-3.2 4.4 0 c0-3.2 4.4-3.2 4.4 0 c0 4.4-4.4 7.2-4.4 7.2 c0 0-4.4-2.8-4.4-7.2z" fill="#f4c0d0" stroke="#d391a6" stroke-width=".7"/>
+      <path d="M248 40 c0-2.6 3.6-2.6 3.6 0 c0-2.6 3.6-2.6 3.6 0 c0 3.6-3.6 6-3.6 6 c0 0-3.6-2.4-3.6-6z" fill="#f7d0dc" stroke="#d391a6" stroke-width=".6"/>
+
+      <path fill="#e7b4c4" d="M24 22 l1.15 3 3 1.15 -3 1.15 -1.15 3 -1.15-3 -3-1.15 3-1.15z"/>
+      <path fill="#e7b4c4" d="M318 28 l1 2.5 2.5 1 -2.5 1 -1 2.5 -1-2.5 -2.5-1 2.5-1z"/>
+      <path fill="#f0c6d4" d="M154 14 l.85 2.1 2.1 .85 -2.1 .85 -.85 2.1 -.85-2.1 -2.1-.85 2.1-.85z"/>
+      <circle cx="106" cy="56" r="1.3" fill="none" stroke="#e7b4c4" stroke-width="1"/>
+      <circle cx="132" cy="50" r="1.15" fill="none" stroke="#e7b4c4" stroke-width="1"/>
+      <circle cx="138" cy="56" r=".8" fill="#f3c6d4"/>
+    </symbol>
+  </defs>
+</svg>
+
+<button class="sound is-paused" id="sound" type="button" aria-label="Play music" aria-pressed="false">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path fill="currentColor" d="M9 17.5a2.5 2.5 0 1 1-2-2.45V6.2l10-2v9.35a2.5 2.5 0 1 1-2-2.45V7.1l-6 1.2v9.2z"/>
+    <path class="slash" d="M5 19 L19 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+  </svg>
+</button>
+<audio id="fileSong" src="cancion.mp3" preload="auto"></audio>
+
+<div class="glow" aria-hidden="true"></div>
+<div class="sky" aria-hidden="true">
+  <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+</div>
+
+<main class="stage" id="stage" data-state="sealed">
+  <div class="sealed-group" id="sealedGroup">
+    <h1 class="headline">
+      A letter for you
+      <svg class="swash" viewBox="0 0 180 16" aria-hidden="true">
+        <path d="M8 10 C 36 10, 48 3, 90 8 S 140 14, 172 7" fill="none" stroke="#c47d92" stroke-width="1.1" stroke-linecap="round"/>
+      </svg>
+    </h1>
+
+    <div class="floater">
+      <div class="ground"></div>
+      <div class="cluster" id="cluster" role="button" tabindex="0" aria-label="Open the envelope">
+        <div class="back">
+          <svg viewBox="0 0 400 256" aria-hidden="true">
+            <defs>
+              <linearGradient id="backGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#7a243c"/>
+                <stop offset="48%" stop-color="#68192f"/>
+                <stop offset="100%" stop-color="#541226"/>
+              </linearGradient>
+              <linearGradient id="cavity" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2a0812"/>
+                <stop offset="100%" stop-color="#2a0812" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <rect width="400" height="256" fill="url(#backGrad)"/>
+            <rect width="400" height="78" fill="url(#cavity)" opacity=".45"/>
+            <rect x="1.2" y="1.2" width="397.6" height="253.6" fill="none" stroke="#45101e" stroke-width="2.4"/>
+          </svg>
+        </div>
+
+        <button class="peek" id="peek" type="button" tabindex="-1" aria-label="Read the letter">
+          <div class="liner" aria-hidden="true">
+            <svg viewBox="0 0 220 40">
+              <g fill="#5c1832" stroke="#3c101c" stroke-width="1">
+                <circle cx="18" cy="28" r="11"/>
+                <circle cx="42" cy="28" r="11"/>
+                <circle cx="66" cy="28" r="11"/>
+                <circle cx="90" cy="28" r="11"/>
+                <circle cx="114" cy="28" r="11"/>
+                <circle cx="138" cy="28" r="11"/>
+                <circle cx="162" cy="28" r="11"/>
+                <circle cx="186" cy="28" r="11"/>
+                <circle cx="206" cy="28" r="11"/>
+              </g>
+            </svg>
+          </div>
+          <div class="peek-clip">
+            <p class="peek-name">
+              <span>Samantha's</span>
+              <span class="nth">15th</span>
+              <span>Birthday</span>
+            </p>
+            <svg class="peek-art" viewBox="0 0 340 152" aria-hidden="true">
+              <use href="#party" width="340" height="152"/>
+            </svg>
+          </div>
+        </button>
+
+        <div class="pocket" aria-hidden="true">
+          <svg viewBox="0 0 400 256">
+            <defs>
+              <linearGradient id="pocketGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#6d2036"/>
+                <stop offset="100%" stop-color="#4c1224"/>
+              </linearGradient>
+            </defs>
+            <path d="M0 118 L108 176 L0 256 Z" fill="#3e0e1c"/>
+            <path d="M400 118 L292 176 L400 256 Z" fill="#360c18"/>
+            <path d="M0 154 Q200 196 400 154 L400 256 L0 256 Z" fill="url(#pocketGrad)"/>
+            <path d="M0 154 Q200 196 400 154" fill="none" stroke="#8d445c" stroke-width="1.6" opacity=".55"/>
+            <path d="M18 176 L200 214" stroke="#2c0812" stroke-width="1" opacity=".28"/>
+            <path d="M382 176 L200 214" stroke="#2c0812" stroke-width="1" opacity=".22"/>
+          </svg>
+        </div>
+
+        <div class="flap" aria-hidden="true">
+          <div class="flap-front">
+            <svg viewBox="0 0 400 136">
+              <defs>
+                <linearGradient id="flapGrad" x1="0" y1="0" x2=".15" y2="1">
+                  <stop offset="0%" stop-color="#8d3148"/>
+                  <stop offset="46%" stop-color="#732238"/>
+                  <stop offset="100%" stop-color="#61182c"/>
+                </linearGradient>
+                <mask id="outLace" maskUnits="userSpaceOnUse">
+                  <rect width="400" height="136" fill="white"/>
+                  <path d="M0 0 L400 0 L200 128 Z" fill="black"/>
+                </mask>
+              </defs>
+              <path d="M0 0 L400 0 L200 128 Z" fill="url(#flapGrad)"/>
+              <path d="M16 1.6 H384" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/>
+              <g mask="url(#outLace)" fill="#7c2942" stroke="#45101e" stroke-width="1.25">
+                <circle cx="13.4" cy="12.4" r="8.4"/><circle cx="386.6" cy="12.4" r="8.4"/>
+                <circle cx="27.9" cy="21.7" r="8.4"/><circle cx="372.1" cy="21.7" r="8.4"/>
+                <circle cx="42.4" cy="30.9" r="8.4"/><circle cx="357.6" cy="30.9" r="8.4"/>
+                <circle cx="56.9" cy="40.2" r="8.4"/><circle cx="343.1" cy="40.2" r="8.4"/>
+                <circle cx="71.4" cy="49.5" r="8.4"/><circle cx="328.6" cy="49.5" r="8.4"/>
+                <circle cx="85.9" cy="58.8" r="8.4"/><circle cx="314.1" cy="58.8" r="8.4"/>
+                <circle cx="100.4" cy="68" r="8.4"/><circle cx="299.6" cy="68" r="8.4"/>
+                <circle cx="114.8" cy="77.3" r="8.4"/><circle cx="285.2" cy="77.3" r="8.4"/>
+                <circle cx="129.3" cy="86.6" r="8.4"/><circle cx="270.7" cy="86.6" r="8.4"/>
+                <circle cx="143.8" cy="95.8" r="8.4"/><circle cx="256.2" cy="95.8" r="8.4"/>
+                <circle cx="158.3" cy="105.1" r="8.4"/><circle cx="241.7" cy="105.1" r="8.4"/>
+                <circle cx="172.8" cy="114.4" r="8.4"/><circle cx="227.2" cy="114.4" r="8.4"/>
+              </g>
+            </svg>
+          </div>
+          <div class="flap-back"></div>
+        </div>
+
+        <div class="seal" aria-hidden="true">
+          <svg class="rose" viewBox="0 0 120 120">
+            <defs>
+              <radialGradient id="wax" cx="35%" cy="30%" r="72%">
+                <stop offset="0%" stop-color="#ffe4ee"/>
+                <stop offset="42%" stop-color="#f7b4c8"/>
+                <stop offset="100%" stop-color="#e27898"/>
+              </radialGradient>
+              <radialGradient id="petalA" cx="32%" cy="30%" r="75%">
+                <stop offset="0%" stop-color="#fff5f8"/>
+                <stop offset="55%" stop-color="#f7c0d2"/>
+                <stop offset="100%" stop-color="#ee96b2"/>
+              </radialGradient>
+            </defs>
+            <circle cx="60" cy="60" r="54" fill="url(#wax)"/>
+            <g fill="url(#petalA)" stroke="#e489a6" stroke-width=".7">
+              <ellipse cx="60" cy="36" rx="17" ry="15" transform="rotate(0 60 60)"/>
+              <ellipse cx="60" cy="36" rx="17" ry="15" transform="rotate(72 60 60)"/>
+              <ellipse cx="60" cy="36" rx="17" ry="15" transform="rotate(144 60 60)"/>
+              <ellipse cx="60" cy="36" rx="17" ry="15" transform="rotate(216 60 60)"/>
+              <ellipse cx="60" cy="36" rx="17" ry="15" transform="rotate(288 60 60)"/>
+            </g>
+            <g fill="#ffeef4" stroke="#f0a8be" stroke-width=".55">
+              <ellipse cx="60" cy="44" rx="12" ry="11" transform="rotate(36 60 60)"/>
+              <ellipse cx="60" cy="44" rx="12" ry="11" transform="rotate(108 60 60)"/>
+              <ellipse cx="60" cy="44" rx="12" ry="11" transform="rotate(180 60 60)"/>
+              <ellipse cx="60" cy="44" rx="12" ry="11" transform="rotate(252 60 60)"/>
+              <ellipse cx="60" cy="44" rx="12" ry="11" transform="rotate(324 60 60)"/>
+            </g>
+            <g fill="none" stroke="#e47898" stroke-width="2.1" stroke-linecap="round">
+              <path d="M60 60 c 0-6 7-8 10-3 c 4 6-2 12-8 10 c-8-3-9-13-3-18 c 8-6 18-2 20 8"/>
+            </g>
+            <circle cx="60" cy="60" r="3.2" fill="#fff1f5"/>
+            <ellipse cx="46" cy="40" rx="10" ry="5.5" fill="#fff" opacity=".4" transform="rotate(-30 46 40)"/>
+          </svg>
+          <i class="petal" style="--a:-72deg;--d:52px;--delay:0s"></i>
+          <i class="petal" style="--a:-28deg;--d:46px;--delay:.03s"></i>
+          <i class="petal" style="--a:12deg;--d:58px;--delay:.05s"></i>
+          <i class="petal" style="--a:52deg;--d:44px;--delay:.02s"></i>
+          <i class="petal" style="--a:96deg;--d:54px;--delay:.04s"></i>
+          <i class="petal" style="--a:142deg;--d:42px;--delay:.01s"></i>
+          <i class="petal" style="--a:188deg;--d:50px;--delay:.03s"></i>
+          <i class="petal" style="--a:230deg;--d:56px;--delay:.05s"></i>
+        </div>
+      </div>
+    </div>
+
+    <p class="hint" id="hint" aria-live="polite">(Tap at the envelope to open)</p>
+  </div>
+
+  <div class="card-wrap" id="cardWrap" aria-hidden="true">
+    <div class="frame">
+      <svg class="deco d-bow-tl" viewBox="0 0 96 78" aria-hidden="true"><use href="#bow" width="96" height="78"/></svg>
+      <svg class="deco d-spool-tr" viewBox="0 0 86 108" aria-hidden="true"><use href="#spool" width="86" height="108"/></svg>
+      <svg class="deco d-bow-ml" viewBox="0 0 96 78" aria-hidden="true"><use href="#bow" width="96" height="78"/></svg>
+      <svg class="deco d-bow-mr" viewBox="0 0 96 78" aria-hidden="true"><use href="#bow" width="96" height="78"/></svg>
+      <svg class="deco d-spool-bl" viewBox="0 0 86 108" aria-hidden="true"><use href="#spool" width="86" height="108"/></svg>
+      <svg class="deco d-bow-br" viewBox="0 0 96 78" aria-hidden="true"><use href="#bow" width="96" height="78"/></svg>
+      <svg class="deco d-star" viewBox="0 0 20 20" aria-hidden="true"><use href="#star"/></svg>
+
+      <div class="sheet">
+        <article class="paper">
+          <svg class="name-star s1" viewBox="0 0 20 20" aria-hidden="true"><use href="#star"/></svg>
+          <svg class="name-star s2" viewBox="0 0 20 20" aria-hidden="true"><use href="#star"/></svg>
+          <h2 class="name">
+            <span class="l1">Samantha's</span>
+            <span class="l2">15th</span>
+            <span class="l3">Birthday</span>
+          </h2>
+          <svg class="art" viewBox="0 0 340 152" aria-hidden="true">
+            <use href="#party" width="340" height="152"/>
+          </svg>
+          <div class="rule" aria-hidden="true">
+            <span></span>
+            <svg viewBox="0 0 20 20"><use href="#star"/></svg>
+            <span></span>
+          </div>
+          <p class="info">Sunday, November 15 · 3:30 PM</p>
+          <p class="info">
+            <a class="where" href="https://www.google.com/maps/search/?api=1&amp;query=Av.+Las+Bombas,+La+Boyera" target="_blank" rel="noopener noreferrer">Av. Las Bombas, La Boyera</a>
+          </p>
+          <div class="dress">
+            <p>Dresscode</p>
+            <span class="dots" role="img" aria-label="Blush, mocha, and cocoa">
+              <i style="--c:#f4c3d0"></i>
+              <i style="--c:#c49a74"></i>
+              <i style="--c:#5c4038"></i>
+            </span>
+          </div>
+        </article>
+      </div>
+
+      <button class="replay" id="replay" type="button">Seal it again</button>
+    </div>
+  </div>
+</main>
+
+<svg class="grain" aria-hidden="true">
+  <filter id="grain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/>
+  </filter>
+  <rect width="100%" height="100%" filter="url(#grain)"/>
+</svg>
+
+<script>
+  const stage = document.getElementById("stage");
+  const cluster = document.getElementById("cluster");
+  const peek = document.getElementById("peek");
+  const hint = document.getElementById("hint");
+  const sealedGroup = document.getElementById("sealedGroup");
+  const cardWrap = document.getElementById("cardWrap");
+  const replay = document.getElementById("replay");
+
+  const hints = {
+    sealed: "(Tap at the envelope to open)",
+    open: "(Click on the letter to read it!)",
+    reading: ""
+  };
+
+  let state = "sealed";
+
+  function setState(next) {
+    if (next === state) return;
+    state = next;
+    stage.dataset.state = next;
+    hint.textContent = hints[next];
+
+    const reading = next === "reading";
+    sealedGroup.setAttribute("aria-hidden", reading ? "true" : "false");
+    cardWrap.setAttribute("aria-hidden", reading ? "false" : "true");
+
+    if (next === "sealed") {
+      cluster.tabIndex = 0;
+      cluster.setAttribute("aria-label", "Open the envelope");
+      peek.tabIndex = -1;
+    } else if (next === "open") {
+      cluster.tabIndex = 0;
+      cluster.setAttribute("aria-label", "Open the letter");
+      peek.tabIndex = 0;
+    } else {
+      cluster.tabIndex = -1;
+      peek.tabIndex = -1;
+    }
+  }
+
+  function activate(event) {
+    if (event.type === "keydown" && event.key !== "Enter" && event.key !== " ") return;
+    if (event.type === "keydown") event.preventDefault();
+    if (state === "sealed") {
+      setState("open");
+    } else if (state === "open") {
+      setState("reading");
+      music.start();
+    }
+  }
+
+  cluster.addEventListener("click", activate);
+  cluster.addEventListener("keydown", activate);
+  peek.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (state === "open") {
+      setState("reading");
+      music.start();
+    }
+  });
+
+  replay.addEventListener("click", () => setState("sealed"));
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    if (state === "reading") setState("open");
+    else if (state === "open") setState("sealed");
+  });
+
+  const soundBtn = document.getElementById("sound");
+  const fileSong = document.getElementById("fileSong");
+  const songStart = 22;
+  let songBroken = false;
+  fileSong.addEventListener("error", () => { songBroken = true; });
+
+  function cueSong() {
+    if (fileSong.currentTime < songStart - 0.2) fileSong.currentTime = songStart;
+  }
+
+  const music = (() => {
+    let ctx, gain, timer, nextTime = 0, step = 0, playing = false, usingFile = false;
+    const beat = 0.56;
+    const lead = [76, 79, 81, 79, 76, 74, 72, 74, 76, 72, 67, 72, 74, 76, 79, 76, 74, 72, 71, 72, 74, 67, 69, 72];
+    const bass = [60, 55, 57, 53];
+    const midi = (n) => 440 * Math.pow(2, (n - 69) / 12);
+
+    function tone(freq, time, dur, type, vol) {
+      const osc = ctx.createOscillator();
+      const amp = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 2200;
+      osc.type = type;
+      osc.frequency.value = freq;
+      amp.gain.setValueAtTime(0.0001, time);
+      amp.gain.exponentialRampToValueAtTime(vol, time + 0.03);
+      amp.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+      osc.connect(filter);
+      filter.connect(amp);
+      amp.connect(gain);
+      osc.start(time);
+      osc.stop(time + dur + 0.02);
+    }
+
+    function schedule() {
+      if (!playing || usingFile) return;
+      while (nextTime < ctx.currentTime + 1.15) {
+        const i = step % lead.length;
+        tone(midi(lead[i]), nextTime, beat * 1.15, "triangle", 0.07);
+        tone(midi(lead[i] + 12), nextTime, beat * 0.42, "sine", 0.025);
+        if (i % 3 === 0) tone(midi(bass[(i / 3) % bass.length]), nextTime, beat * 2.6, "sine", 0.045);
+        nextTime += beat;
+        step += 1;
+      }
+    }
+
+    function setButton(on) {
+      soundBtn.classList.toggle("is-paused", !on);
+      soundBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      soundBtn.setAttribute("aria-label", on ? "Pause music" : "Play music");
+    }
+
+    return {
+      async start() {
+        if (playing) return;
+        if (!songBroken) {
+          try {
+            fileSong.volume = 0.7;
+            if (fileSong.readyState >= 1) cueSong();
+            else fileSong.addEventListener("loadedmetadata", cueSong, { once: true });
+            await fileSong.play();
+            cueSong();
+            usingFile = true;
+            playing = true;
+            setButton(true);
+            return;
+          } catch (err) {
+            usingFile = false;
+          }
+        }
+        ctx = ctx || new AudioContext();
+        if (ctx.state === "suspended") await ctx.resume();
+        if (!gain) {
+          gain = ctx.createGain();
+          gain.gain.value = 0.0001;
+          gain.connect(ctx.destination);
+        }
+        gain.gain.cancelScheduledValues(ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.9);
+        nextTime = ctx.currentTime + 0.06;
+        playing = true;
+        usingFile = false;
+        schedule();
+        clearInterval(timer);
+        timer = setInterval(schedule, 350);
+        setButton(true);
+      },
+      stop() {
+        if (!playing) return;
+        playing = false;
+        clearInterval(timer);
+        if (usingFile) {
+          fileSong.pause();
+          usingFile = false;
+        } else if (gain && ctx) {
+          gain.gain.cancelScheduledValues(ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + 0.45);
+        }
+        setButton(false);
+      }
+    };
+  })();
+
+  fileSong.addEventListener("ended", () => {
+    fileSong.currentTime = songStart;
+    if (soundBtn.getAttribute("aria-pressed") === "true") fileSong.play();
+  });
+
+  soundBtn.addEventListener("click", () => {
+    if (soundBtn.getAttribute("aria-pressed") === "true") music.stop();
+    else music.start();
+  });
+
+  const initial = location.hash.replace("#", "");
+  if (initial === "open" || initial === "reading" || initial === "sealed") {
+    document.body.style.animation = "none";
+    setState(initial);
+  }
+</script>
+</body>
+</html>
