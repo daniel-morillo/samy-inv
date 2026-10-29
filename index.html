@@ -1072,6 +1072,7 @@
     if (state === "sealed") {
       setState("open");
       music.start();
+      needleRain.burst(cluster);
     } else if (state === "open") {
       setState("reading");
       music.start();
@@ -1206,6 +1207,161 @@
     fileSong.play();
   });
 
+
+  /* Lluvia de agujas al abrir el sobre */
+  const needleRain = (() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const threads = ["#9a3f56", "#b46880", "#e3a8b6", "#f0b4c8", "#6b1b30", "#d391a6", "#fffaf7", "#c9899c"];
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50";
+    document.body.appendChild(canvas);
+    const c = canvas.getContext("2d");
+    let W = 0, H = 0, dpr = 1, parts = [], raf = 0, last = 0;
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    const rand = (a, b) => a + Math.random() * (b - a);
+
+    function make(x, y, delay) {
+      const ang = rand(-Math.PI * 0.92, -Math.PI * 0.08);
+      const speed = rand(420, 900);
+      return {
+        x, y, delay,
+        vx: Math.cos(ang) * speed,
+        vy: Math.sin(ang) * speed,
+        rot: rand(0, Math.PI * 2),
+        vr: rand(-7, 7),
+        len: rand(26, 38),
+        flip: rand(0, Math.PI * 2),
+        vflip: rand(3, 8),
+        sway: rand(0.6, 1.6),
+        color: threads[(Math.random() * threads.length) | 0],
+        tail: rand(28, 48),
+        life: 0,
+        ttl: rand(3.2, 4.6),
+        trail: []
+      };
+    }
+
+    function drawNeedle(p, alpha) {
+      const L = p.len;
+      const squash = 0.35 + 0.65 * Math.abs(Math.cos(p.flip));
+      // hilo: sigue la trayectoria reciente
+      if (p.trail.length > 2) {
+        c.save();
+        c.globalAlpha = alpha * 0.9;
+        c.strokeStyle = p.color;
+        c.lineWidth = 1.8;
+        c.lineCap = "round";
+        c.lineJoin = "round";
+        c.beginPath();
+        c.moveTo(p.trail[0].x, p.trail[0].y);
+        for (let i = 1; i < p.trail.length - 1; i++) {
+          const mx = (p.trail[i].x + p.trail[i + 1].x) / 2;
+          const my = (p.trail[i].y + p.trail[i + 1].y) / 2;
+          c.quadraticCurveTo(p.trail[i].x, p.trail[i].y, mx, my);
+        }
+        const e = p.trail[p.trail.length - 1];
+        c.lineTo(e.x, e.y);
+        c.stroke();
+        c.restore();
+      }
+      c.save();
+      c.globalAlpha = alpha;
+      c.translate(p.x, p.y);
+      c.rotate(p.rot);
+      c.scale(1, squash);
+      // cuerpo metálico
+      const g = c.createLinearGradient(0, -2, 0, 2);
+      g.addColorStop(0, "#ffffff");
+      g.addColorStop(0.45, "#d9d4d6");
+      g.addColorStop(1, "#8c8487");
+      c.fillStyle = g;
+      c.beginPath();
+      c.moveTo(L / 2, 0);                 // punta
+      c.lineTo(-L / 2 + 3, -1.9);
+      c.quadraticCurveTo(-L / 2 - 1.5, -2.3, -L / 2 - 1.5, 0);
+      c.quadraticCurveTo(-L / 2 - 1.5, 2.3, -L / 2 + 3, 1.9);
+      c.closePath();
+      c.fill();
+      // ojo de la aguja
+      c.fillStyle = "rgba(92,67,60,.75)";
+      c.beginPath();
+      c.ellipse(-L / 2 + 1.2, 0, 2.1, 0.55, 0, 0, Math.PI * 2);
+      c.fill();
+      // brillo
+      c.strokeStyle = "rgba(255,255,255,.85)";
+      c.lineWidth = 0.6;
+      c.beginPath();
+      c.moveTo(-L / 2 + 4, -0.6);
+      c.lineTo(L / 2 - 6, -0.3);
+      c.stroke();
+      c.restore();
+    }
+
+    function eyePoint(p) {
+      const L = p.len, squash = 0.35 + 0.65 * Math.abs(Math.cos(p.flip));
+      const ex = -L / 2, cs = Math.cos(p.rot), sn = Math.sin(p.rot);
+      return { x: p.x + ex * cs, y: p.y + ex * sn };
+    }
+
+    function frame(t) {
+      const dt = Math.min(0.033, (t - last) / 1000 || 0.016);
+      last = t;
+      c.clearRect(0, 0, W, H);
+      let alive = 0;
+      for (const p of parts) {
+        if (p.delay > 0) { p.delay -= dt; alive++; continue; }
+        p.life += dt;
+        if (p.life > p.ttl || p.y > H + 80) continue;
+        alive++;
+        const drag = Math.pow(0.12, dt);       // frena rápido al inicio
+        p.vx *= drag; p.vy *= drag;
+        p.vy += 340 * dt;                       // gravedad suave
+        const terminal = 150;
+        if (p.vy > terminal) p.vy = terminal;
+        p.x += (p.vx + Math.sin(p.life * 3 * p.sway + p.flip) * 38) * dt;
+        p.y += p.vy * dt;
+        p.rot += p.vr * dt;
+        p.vr *= Math.pow(0.55, dt);
+        p.flip += p.vflip * dt;
+        const ep = eyePoint(p);
+        p.trail.push(ep);
+        // el hilo mide como mucho p.tail px: se recorta por longitud, no por cuadros
+        let total = 0;
+        for (let i = p.trail.length - 1; i > 0; i--) {
+          total += Math.hypot(p.trail[i].x - p.trail[i - 1].x, p.trail[i].y - p.trail[i - 1].y);
+          if (total > p.tail) { p.trail.splice(0, i - 1); break; }
+        }
+        const fadeIn = Math.min(1, p.life / 0.12);
+        const fadeOut = Math.min(1, (p.ttl - p.life) / 0.9);
+        drawNeedle(p, Math.max(0, Math.min(fadeIn, fadeOut)));
+      }
+      if (alive) raf = requestAnimationFrame(frame);
+      else { c.clearRect(0, 0, W, H); parts = []; raf = 0; }
+    }
+
+    return {
+      burst(el) {
+        if (reduce) return;
+        const r = el ? el.getBoundingClientRect() : { left: W / 2, top: H / 2, width: 0, height: 0 };
+        const cx = r.left + r.width / 2, cy = r.top + r.height * 0.35;
+        const n = W < 600 ? 55 : 90;
+        for (let i = 0; i < n; i++) {
+          parts.push(make(cx + rand(-r.width * 0.3, r.width * 0.3), cy + rand(-10, 10), rand(0, 0.45)));
+        }
+        if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
+      }
+    };
+  })();
 
   const initial = location.hash.replace("#", "");
   if (initial === "open" || initial === "reading" || initial === "sealed") {
