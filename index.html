@@ -803,12 +803,6 @@
   </defs>
 </svg>
 
-<button class="sound is-paused" id="sound" type="button" aria-label="Play music" aria-pressed="false">
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <path fill="currentColor" d="M9 17.5a2.5 2.5 0 1 1-2-2.45V6.2l10-2v9.35a2.5 2.5 0 1 1-2-2.45V7.1l-6 1.2v9.2z"/>
-    <path class="slash" d="M5 19 L19 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-  </svg>
-</button>
 <audio id="fileSong" src="cancion.mp3" preload="auto"></audio>
 
 <div class="glow" aria-hidden="true"></div>
@@ -1077,6 +1071,7 @@
     if (event.type === "keydown") event.preventDefault();
     if (state === "sealed") {
       setState("open");
+      music.start();
     } else if (state === "open") {
       setState("reading");
       music.start();
@@ -1149,6 +1144,7 @@
     }
 
     function setButton(on) {
+      if (!soundBtn) return;
       soundBtn.classList.toggle("is-paused", !on);
       soundBtn.setAttribute("aria-pressed", on ? "true" : "false");
       soundBtn.setAttribute("aria-label", on ? "Pause music" : "Play music");
@@ -1207,13 +1203,9 @@
 
   fileSong.addEventListener("ended", () => {
     fileSong.currentTime = songStart;
-    if (soundBtn.getAttribute("aria-pressed") === "true") fileSong.play();
+    fileSong.play();
   });
 
-  soundBtn.addEventListener("click", () => {
-    if (soundBtn.getAttribute("aria-pressed") === "true") music.stop();
-    else music.start();
-  });
 
   const initial = location.hash.replace("#", "");
   if (initial === "open" || initial === "reading" || initial === "sealed") {
